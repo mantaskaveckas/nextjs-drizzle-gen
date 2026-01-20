@@ -4,7 +4,8 @@
   "description": "Rails-like generators for Next.js + Drizzle ORM projects",
   "type": "module",
   "bin": {
-    "drizzle-gen": "dist/index.js"
+    "drizzle-gen": "dist/index.js",
+    "nextjs-drizzle-gen": "dist/index.js"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
