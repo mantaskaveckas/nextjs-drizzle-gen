@@ -8,12 +8,12 @@ sidebar_position: 5
 
 ## Commands
 
-### `drizzle-gen model`
+### `brizzle model`
 
 Creates a Drizzle schema model.
 
 ```bash
-drizzle-gen model <name> [fields...]
+brizzle model <name> [fields...]
 ```
 
 **Arguments:**
@@ -22,17 +22,17 @@ drizzle-gen model <name> [fields...]
 
 **Example:**
 ```bash
-drizzle-gen model user name:string email:string:unique
+brizzle model user name:string email:string:unique
 ```
 
 ---
 
-### `drizzle-gen actions`
+### `brizzle actions`
 
 Creates server actions for an existing model.
 
 ```bash
-drizzle-gen actions <name>
+brizzle actions <name>
 ```
 
 **Arguments:**
@@ -40,17 +40,17 @@ drizzle-gen actions <name>
 
 **Example:**
 ```bash
-drizzle-gen actions user
+brizzle actions user
 ```
 
 ---
 
-### `drizzle-gen resource`
+### `brizzle resource`
 
 Creates model + actions (no UI pages).
 
 ```bash
-drizzle-gen resource <name> [fields...]
+brizzle resource <name> [fields...]
 ```
 
 **Arguments:**
@@ -59,17 +59,17 @@ drizzle-gen resource <name> [fields...]
 
 **Example:**
 ```bash
-drizzle-gen resource session token:uuid userId:references:user
+brizzle resource session token:uuid userId:references:user
 ```
 
 ---
 
-### `drizzle-gen scaffold`
+### `brizzle scaffold`
 
 Creates model + actions + CRUD pages.
 
 ```bash
-drizzle-gen scaffold <name> [fields...]
+brizzle scaffold <name> [fields...]
 ```
 
 **Arguments:**
@@ -78,17 +78,17 @@ drizzle-gen scaffold <name> [fields...]
 
 **Example:**
 ```bash
-drizzle-gen scaffold product name:string price:float description:text?
+brizzle scaffold product name:string price:float description:text?
 ```
 
 ---
 
-### `drizzle-gen api`
+### `brizzle api`
 
 Creates model + REST API routes.
 
 ```bash
-drizzle-gen api <name> [fields...]
+brizzle api <name> [fields...]
 ```
 
 **Arguments:**
@@ -97,17 +97,17 @@ drizzle-gen api <name> [fields...]
 
 **Example:**
 ```bash
-drizzle-gen api webhook url:string secret:string:unique
+brizzle api webhook url:string secret:string:unique
 ```
 
 ---
 
-### `drizzle-gen destroy`
+### `brizzle destroy`
 
 Removes generated files (does not modify schema).
 
 ```bash
-drizzle-gen destroy <type> <name>
+brizzle destroy <type> <name>
 ```
 
 **Arguments:**
@@ -116,18 +116,18 @@ drizzle-gen destroy <type> <name>
 
 **Example:**
 ```bash
-drizzle-gen destroy scaffold post
-drizzle-gen destroy api product --dry-run
+brizzle destroy scaffold post
+brizzle destroy api product --dry-run
 ```
 
 ---
 
-### `drizzle-gen config`
+### `brizzle config`
 
 Shows detected project configuration.
 
 ```bash
-drizzle-gen config
+brizzle config
 ```
 
 **Output:**
@@ -158,7 +158,7 @@ These options work with all generator commands:
 Preview what would be generated:
 
 ```bash
-drizzle-gen scaffold post title:string --dry-run
+brizzle scaffold post title:string --dry-run
 ```
 
 ### Force Overwrite
@@ -166,7 +166,7 @@ drizzle-gen scaffold post title:string --dry-run
 Regenerate files even if they exist:
 
 ```bash
-drizzle-gen scaffold post title:string body:text --force
+brizzle scaffold post title:string body:text --force
 ```
 
 ### UUID Primary Keys
@@ -174,7 +174,7 @@ drizzle-gen scaffold post title:string body:text --force
 Use UUIDs instead of auto-incrementing integers:
 
 ```bash
-drizzle-gen scaffold post title:string --uuid
+brizzle scaffold post title:string --uuid
 ```
 
 ### Skip Timestamps
@@ -182,5 +182,5 @@ drizzle-gen scaffold post title:string --uuid
 Create model without createdAt/updatedAt:
 
 ```bash
-drizzle-gen model setting key:string value:text --no-timestamps
+brizzle model setting key:string value:text --no-timestamps
 ```

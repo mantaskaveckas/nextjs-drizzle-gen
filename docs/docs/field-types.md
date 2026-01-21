@@ -29,7 +29,7 @@ sidebar_position: 4
 Define a field with a fixed set of allowed values:
 
 ```bash
-drizzle-gen model order status:enum:pending,paid,shipped,delivered
+brizzle model order status:enum:pending,paid,shipped,delivered
 ```
 
 **SQLite:**
@@ -54,7 +54,7 @@ status: mysqlEnum("status", ["pending", "paid", "shipped", "delivered"]).notNull
 Create a foreign key reference to another table:
 
 ```bash
-drizzle-gen model comment authorId:references:user postId:references:post
+brizzle model comment authorId:references:user postId:references:post
 ```
 
 Generates:
@@ -73,8 +73,8 @@ Make a field optional by adding `?` to the field name or type:
 
 ```bash
 # These are equivalent:
-drizzle-gen model user bio:text?
-drizzle-gen model user bio?:text
+brizzle model user bio:text?
+brizzle model user bio?:text
 ```
 
 Without `?`, fields are `notNull()` by default.
@@ -84,7 +84,7 @@ Without `?`, fields are `notNull()` by default.
 Add a unique constraint:
 
 ```bash
-drizzle-gen model user email:string:unique
+brizzle model user email:string:unique
 ```
 
 Generates:
@@ -97,7 +97,7 @@ email: text("email").notNull().unique()
 You can combine nullable and unique:
 
 ```bash
-drizzle-gen model user email:string:unique nickname?:unique
+brizzle model user email:string:unique nickname?:unique
 ```
 
 ## Field Syntax

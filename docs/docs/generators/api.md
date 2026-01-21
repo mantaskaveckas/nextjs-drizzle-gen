@@ -11,13 +11,13 @@ Creates model + REST API route handlers.
 ## Usage
 
 ```bash
-drizzle-gen api <name> [fields...]
+brizzle api <name> [fields...]
 ```
 
 ## Example
 
 ```bash
-drizzle-gen api webhook url:string secret:string:unique
+brizzle api webhook url:string secret:string:unique
 ```
 
 ### Output

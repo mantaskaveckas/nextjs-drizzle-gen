@@ -8,16 +8,16 @@ sidebar_position: 2
 
 ## Global Installation
 
-Install globally to use the `drizzle-gen` command anywhere:
+Install globally to use the `brizzle` command anywhere:
 
 ```bash
-npm install -g nextjs-drizzle-gen
+npm install -g brizzle
 ```
 
 Then use it in any Next.js + Drizzle project:
 
 ```bash
-drizzle-gen scaffold post title:string body:text
+brizzle scaffold post title:string body:text
 ```
 
 ## Using npx
@@ -25,12 +25,12 @@ drizzle-gen scaffold post title:string body:text
 Run without installing:
 
 ```bash
-npx nextjs-drizzle-gen scaffold post title:string body:text
+npx brizzle scaffold post title:string body:text
 ```
 
 ## Project Requirements
 
-Before using nextjs-drizzle-gen, ensure your project has:
+Before using brizzle, ensure your project has:
 
 ### 1. Next.js with App Router
 
@@ -94,7 +94,7 @@ export const db = drizzle(sqlite);
 Run the config command to verify your setup:
 
 ```bash
-drizzle-gen config
+brizzle config
 ```
 
 This will show your detected configuration:

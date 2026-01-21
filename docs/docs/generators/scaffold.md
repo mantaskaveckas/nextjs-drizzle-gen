@@ -11,13 +11,13 @@ Creates a complete CRUD interface: model + actions + pages.
 ## Usage
 
 ```bash
-drizzle-gen scaffold <name> [fields...]
+brizzle scaffold <name> [fields...]
 ```
 
 ## Example
 
 ```bash
-drizzle-gen scaffold post title:string body:text published:boolean
+brizzle scaffold post title:string body:text published:boolean
 ```
 
 ### Output

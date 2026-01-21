@@ -11,13 +11,13 @@ Creates server actions file with CRUD operations for an existing model.
 ## Usage
 
 ```bash
-drizzle-gen actions <name>
+brizzle actions <name>
 ```
 
 ## Example
 
 ```bash
-drizzle-gen actions user
+brizzle actions user
 ```
 
 Generates `app/users/actions.ts`:

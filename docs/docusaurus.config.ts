@@ -3,15 +3,15 @@ import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
-  title: "nextjs-drizzle-gen",
+  title: "brizzle",
   tagline: "Rails-like generators for Next.js + Drizzle ORM projects",
   favicon: "img/favicon.ico",
 
   url: "https://mantaskaveckas.github.io",
-  baseUrl: "/nextjs-drizzle-gen/",
+  baseUrl: "/brizzle/",
 
   organizationName: "mantaskaveckas",
-  projectName: "nextjs-drizzle-gen",
+  projectName: "brizzle",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -29,7 +29,7 @@ const config: Config = {
           sidebarPath: "./sidebars.ts",
           routeBasePath: "/",
           editUrl:
-            "https://github.com/mantaskaveckas/nextjs-drizzle-gen/tree/main/docs/",
+            "https://github.com/mantaskaveckas/brizzle/tree/main/docs/",
         },
         blog: false,
         theme: {
@@ -41,7 +41,7 @@ const config: Config = {
 
   themeConfig: {
     navbar: {
-      title: "nextjs-drizzle-gen",
+      title: "brizzle",
       items: [
         {
           type: "docSidebar",
@@ -50,7 +50,7 @@ const config: Config = {
           label: "Docs",
         },
         {
-          href: "https://github.com/mantaskaveckas/nextjs-drizzle-gen",
+          href: "https://github.com/mantaskaveckas/brizzle",
           label: "GitHub",
           position: "right",
         },
@@ -77,16 +77,16 @@ const config: Config = {
           items: [
             {
               label: "GitHub",
-              href: "https://github.com/mantaskaveckas/nextjs-drizzle-gen",
+              href: "https://github.com/mantaskaveckas/brizzle",
             },
             {
               label: "npm",
-              href: "https://www.npmjs.com/package/nextjs-drizzle-gen",
+              href: "https://www.npmjs.com/package/brizzle",
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} nextjs-drizzle-gen. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} brizzle. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

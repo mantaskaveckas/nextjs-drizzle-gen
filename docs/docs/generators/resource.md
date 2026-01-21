@@ -11,13 +11,13 @@ Creates model + actions without UI pages. Ideal for backend-only resources.
 ## Usage
 
 ```bash
-drizzle-gen resource <name> [fields...]
+brizzle resource <name> [fields...]
 ```
 
 ## Example
 
 ```bash
-drizzle-gen resource session token:uuid userId:references:user --uuid
+brizzle resource session token:uuid userId:references:user --uuid
 ```
 
 ### Output
@@ -41,19 +41,19 @@ Use the resource generator when you need:
 ### Session Management
 
 ```bash
-drizzle-gen resource session token:uuid userId:references:user expiresAt:datetime --uuid
+brizzle resource session token:uuid userId:references:user expiresAt:datetime --uuid
 ```
 
 ### Audit Logging
 
 ```bash
-drizzle-gen resource auditLog action:string entityType:string entityId:integer userId:references:user metadata:json
+brizzle resource auditLog action:string entityType:string entityId:integer userId:references:user metadata:json
 ```
 
 ### Background Jobs
 
 ```bash
-drizzle-gen resource job type:string payload:json status:enum:pending,running,completed,failed attempts:integer
+brizzle resource job type:string payload:json status:enum:pending,running,completed,failed attempts:integer
 ```
 
 ## Difference from Scaffold

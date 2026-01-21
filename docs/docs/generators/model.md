@@ -11,7 +11,7 @@ Creates a Drizzle schema model in `db/schema.ts`.
 ## Usage
 
 ```bash
-drizzle-gen model <name> [fields...]
+brizzle model <name> [fields...]
 ```
 
 ## Examples
@@ -19,7 +19,7 @@ drizzle-gen model <name> [fields...]
 ### Basic Model
 
 ```bash
-drizzle-gen model user name:string email:string
+brizzle model user name:string email:string
 ```
 
 Generates in `db/schema.ts`:
@@ -43,13 +43,13 @@ export const users = sqliteTable("users", {
 ### With Unique Constraint
 
 ```bash
-drizzle-gen model user name:string email:string:unique
+brizzle model user name:string email:string:unique
 ```
 
 ### With Nullable Fields
 
 ```bash
-drizzle-gen model user name:string bio:text? nickname?
+brizzle model user name:string bio:text? nickname?
 ```
 
 The `?` modifier makes a field nullable.
@@ -57,13 +57,13 @@ The `?` modifier makes a field nullable.
 ### With Enum
 
 ```bash
-drizzle-gen model order total:decimal status:enum:pending,paid,shipped
+brizzle model order total:decimal status:enum:pending,paid,shipped
 ```
 
 ### With References
 
 ```bash
-drizzle-gen model comment content:text authorId:references:user
+brizzle model comment content:text authorId:references:user
 ```
 
 Creates a foreign key reference to the `users` table.
@@ -71,7 +71,7 @@ Creates a foreign key reference to the `users` table.
 ### With UUID Primary Key
 
 ```bash
-drizzle-gen model session token:string --uuid
+brizzle model session token:string --uuid
 ```
 
 Uses UUID instead of auto-incrementing integer for the primary key.
@@ -79,7 +79,7 @@ Uses UUID instead of auto-incrementing integer for the primary key.
 ### Without Timestamps
 
 ```bash
-drizzle-gen model setting key:string value:text --no-timestamps
+brizzle model setting key:string value:text --no-timestamps
 ```
 
 Skips the `createdAt` and `updatedAt` fields.
