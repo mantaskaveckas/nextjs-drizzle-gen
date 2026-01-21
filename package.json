@@ -49,6 +49,7 @@
   },
   "homepage": "https://github.com/mantaskaveckas/nextjs-drizzle-gen#readme",
   "dependencies": {
+    "@clack/prompts": "^0.11.0",
     "commander": "^14.0.2"
   },
   "devDependencies": {
