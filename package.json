@@ -1,11 +1,10 @@
 {
-  "name": "nextjs-drizzle-gen",
+  "name": "brizzle",
   "version": "0.2.3",
   "description": "Rails-like generators for Next.js + Drizzle ORM projects",
   "type": "module",
   "bin": {
-    "drizzle-gen": "dist/index.js",
-    "nextjs-drizzle-gen": "dist/index.js"
+    "brizzle": "dist/index.js"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -36,19 +35,21 @@
     "generator",
     "scaffold",
     "cli",
-    "codegen"
+    "codegen",
+    "brizzle"
   ],
   "author": "mantaskaveckas",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mantaskaveckas/nextjs-drizzle-gen.git"
+    "url": "git+https://github.com/mantaskaveckas/brizzle.git"
   },
   "bugs": {
-    "url": "https://github.com/mantaskaveckas/nextjs-drizzle-gen/issues"
+    "url": "https://github.com/mantaskaveckas/brizzle/issues"
   },
-  "homepage": "https://github.com/mantaskaveckas/nextjs-drizzle-gen#readme",
+  "homepage": "https://github.com/mantaskaveckas/brizzle#readme",
   "dependencies": {
+    "@clack/prompts": "^0.10.0",
     "commander": "^14.0.2"
   },
   "devDependencies": {

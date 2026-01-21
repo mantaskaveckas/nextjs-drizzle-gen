@@ -21,7 +21,7 @@ function handleError(error: unknown): void {
 }
 
 program
-  .name("drizzle-gen")
+  .name("brizzle")
   .description("Rails-like generators for Next.js + Drizzle")
   .version(version);
 
@@ -42,11 +42,11 @@ program
     `Generate a Drizzle schema model
 
   Examples:
-    drizzle-gen model user name:string email:string:unique
-    drizzle-gen model post title:string body:text published:boolean
-    drizzle-gen model order total:decimal status:enum:pending,paid,shipped
-    drizzle-gen model token value:uuid --uuid --no-timestamps
-    drizzle-gen model comment content:text? author:string`
+    brizzle model user name:string email:string:unique
+    brizzle model post title:string body:text published:boolean
+    brizzle model order total:decimal status:enum:pending,paid,shipped
+    brizzle model token value:uuid --uuid --no-timestamps
+    brizzle model comment content:text? author:string`
   )
   .option("-f, --force", "Overwrite existing files")
   .option("-n, --dry-run", "Preview changes without writing files")
@@ -69,8 +69,8 @@ program
     `Generate server actions for an existing model
 
   Examples:
-    drizzle-gen actions user
-    drizzle-gen actions post --force`
+    brizzle actions user
+    brizzle actions post --force`
   )
   .option("-f, --force", "Overwrite existing files")
   .option("-n, --dry-run", "Preview changes without writing files")
@@ -88,8 +88,8 @@ program
     `Generate model and actions (no views)
 
   Examples:
-    drizzle-gen resource user name:string email:string:unique
-    drizzle-gen resource session token:uuid userId:references:user --uuid`
+    brizzle resource user name:string email:string:unique
+    brizzle resource session token:uuid userId:references:user --uuid`
   )
   .option("-f, --force", "Overwrite existing files")
   .option("-n, --dry-run", "Preview changes without writing files")
@@ -112,9 +112,9 @@ program
     `Generate model, actions, and pages (full CRUD)
 
   Examples:
-    drizzle-gen scaffold post title:string body:text published:boolean
-    drizzle-gen scaffold product name:string price:float description:text?
-    drizzle-gen scaffold order status:enum:pending,processing,shipped,delivered`
+    brizzle scaffold post title:string body:text published:boolean
+    brizzle scaffold product name:string price:float description:text?
+    brizzle scaffold order status:enum:pending,processing,shipped,delivered`
   )
   .option("-f, --force", "Overwrite existing files")
   .option("-n, --dry-run", "Preview changes without writing files")
@@ -137,8 +137,8 @@ program
     `Generate model and API route handlers (REST)
 
   Examples:
-    drizzle-gen api product name:string price:float
-    drizzle-gen api webhook url:string secret:string:unique --uuid`
+    brizzle api product name:string price:float
+    brizzle api webhook url:string secret:string:unique --uuid`
   )
   .option("-f, --force", "Overwrite existing files")
   .option("-n, --dry-run", "Preview changes without writing files")
@@ -166,8 +166,8 @@ program
     `Remove generated files (scaffold, resource, api)
 
   Examples:
-    drizzle-gen destroy scaffold post
-    drizzle-gen d api product --dry-run`
+    brizzle destroy scaffold post
+    brizzle d api product --dry-run`
   )
   .option("-n, --dry-run", "Preview changes without deleting files")
   .action((type: string, name: string, opts: CommandOptions) => {

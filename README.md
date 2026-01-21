@@ -1,99 +1,99 @@
-# nextjs-drizzle-gen
+# brizzle
 
-[![CI](https://github.com/mantaskaveckas/nextjs-drizzle-gen/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mantaskaveckas/nextjs-drizzle-gen/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/nextjs-drizzle-gen)](https://www.npmjs.com/package/nextjs-drizzle-gen)
-[![npm downloads](https://img.shields.io/npm/dm/nextjs-drizzle-gen)](https://www.npmjs.com/package/nextjs-drizzle-gen)
+[![CI](https://github.com/mantaskaveckas/brizzle/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mantaskaveckas/brizzle/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/brizzle)](https://www.npmjs.com/package/brizzle)
+[![npm downloads](https://img.shields.io/npm/dm/brizzle)](https://www.npmjs.com/package/brizzle)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Rails-like generators for Next.js + Drizzle ORM projects. Generate models, server actions, CRUD pages, and API routes with a single command.
 
-[**Documentation**](https://mantaskaveckas.github.io/nextjs-drizzle-gen/)
+[**Documentation**](https://mantaskaveckas.github.io/brizzle/)
 
 ## Installation
 
 ```bash
-npm install -g nextjs-drizzle-gen
+npm install -g brizzle
 ```
 
 Or use with npx:
 
 ```bash
-npx nextjs-drizzle-gen scaffold post title:string body:text
+npx brizzle scaffold post title:string body:text
 ```
 
 ## Quick Start
 
 ```bash
 # Generate a full CRUD scaffold (model + actions + pages)
-drizzle-gen scaffold post title:string body:text published:boolean
+brizzle scaffold post title:string body:text published:boolean
 
 # Generate just model and actions (no views)
-drizzle-gen resource user name:string email:string:unique
+brizzle resource user name:string email:string:unique
 
 # Generate model and REST API routes
-drizzle-gen api product name:string price:float
+brizzle api product name:string price:float
 
 # Generate only a model
-drizzle-gen model comment content:text authorId:references:user
+brizzle model comment content:text authorId:references:user
 
 # Generate only actions for an existing model
-drizzle-gen actions post
+brizzle actions post
 ```
 
 ## Commands
 
-### `drizzle-gen model <name> [fields...]`
+### `brizzle model <name> [fields...]`
 
 Creates a Drizzle schema model in `db/schema.ts`.
 
 ```bash
-drizzle-gen model user name:string email:string:unique
-drizzle-gen model post title:string body:text published:boolean
-drizzle-gen model order total:decimal status:enum:pending,paid,shipped
+brizzle model user name:string email:string:unique
+brizzle model post title:string body:text published:boolean
+brizzle model order total:decimal status:enum:pending,paid,shipped
 ```
 
-### `drizzle-gen actions <name>`
+### `brizzle actions <name>`
 
 Creates server actions file with CRUD operations.
 
 ```bash
-drizzle-gen actions user
+brizzle actions user
 ```
 
-### `drizzle-gen resource <name> [fields...]`
+### `brizzle resource <name> [fields...]`
 
 Creates model + actions (no UI pages).
 
 ```bash
-drizzle-gen resource session token:uuid userId:references:user --uuid
+brizzle resource session token:uuid userId:references:user --uuid
 ```
 
-### `drizzle-gen scaffold <name> [fields...]`
+### `brizzle scaffold <name> [fields...]`
 
 Creates model + actions + full CRUD pages (list, show, new, edit).
 
 ```bash
-drizzle-gen scaffold product name:string price:float description:text?
+brizzle scaffold product name:string price:float description:text?
 ```
 
-### `drizzle-gen api <name> [fields...]`
+### `brizzle api <name> [fields...]`
 
 Creates model + REST API route handlers.
 
 ```bash
-drizzle-gen api webhook url:string secret:string:unique
+brizzle api webhook url:string secret:string:unique
 ```
 
-### `drizzle-gen destroy <type> <name>`
+### `brizzle destroy <type> <name>`
 
-Removes drizzle-gend files (does not modify schema).
+Removes generated files (does not modify schema).
 
 ```bash
-drizzle-gen destroy scaffold post
-drizzle-gen destroy api product --dry-run
+brizzle destroy scaffold post
+brizzle destroy api product --dry-run
 ```
 
-### `drizzle-gen config`
+### `brizzle config`
 
 Shows detected project configuration.
 
@@ -122,12 +122,12 @@ Shows detected project configuration.
 
 - **Nullable**: Add `?` to make field optional
   ```bash
-  drizzle-gen model user bio:text? nickname?
+  brizzle model user bio:text? nickname?
   ```
 
 - **Unique**: Add `:unique` modifier
   ```bash
-  drizzle-gen model user email:string:unique
+  brizzle model user email:string:unique
   ```
 
 ## Options
@@ -148,12 +148,12 @@ The generator automatically detects your project configuration:
 - **Database dialect**: Reads from `drizzle.config.ts`
 - **DB location**: Checks `db/`, `lib/db/`, `server/db/`
 
-Run `drizzle-gen config` to see detected settings.
+Run `brizzle config` to see detected settings.
 
 ## Example Output
 
 ```bash
-$ drizzle-gen scaffold post title:string body:text published:boolean
+$ brizzle scaffold post title:string body:text published:boolean
 
 Scaffolding Post...
 
