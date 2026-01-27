@@ -1,5 +1,20 @@
 import { VALID_FIELD_TYPES } from "./types";
 
+// SQL reserved words that could cause issues when used as column names
+const SQL_RESERVED_WORDS = [
+  // SQL keywords
+  "select", "from", "where", "insert", "update", "delete", "drop", "create",
+  "alter", "index", "table", "column", "database", "schema", "and", "or",
+  "not", "null", "true", "false", "order", "by", "group", "having", "limit",
+  "offset", "join", "left", "right", "inner", "outer", "on", "as", "in",
+  "between", "like", "is", "case", "when", "then", "else", "end", "exists",
+  "distinct", "all", "any", "union", "intersect", "except", "primary",
+  "foreign", "key", "references", "unique", "default", "check", "constraint",
+  // Common type names that might conflict
+  "int", "integer", "float", "double", "decimal", "numeric", "boolean",
+  "bool", "text", "varchar", "char", "date", "time", "timestamp", "datetime",
+];
+
 export function validateModelName(name: string): void {
   if (!name) {
     throw new Error("Model name is required");
@@ -34,6 +49,11 @@ export function validateFieldDefinition(fieldDef: string): void {
   if (!/^[a-z][a-zA-Z0-9]*$/.test(name)) {
     throw new Error(
       `Invalid field name "${name}". Must be camelCase (start with lowercase letter).`
+    );
+  }
+  if (SQL_RESERVED_WORDS.includes(name.toLowerCase())) {
+    throw new Error(
+      `Field name "${name}" is a SQL reserved word. Consider renaming to "${name}Value" or "${name}Field".`
     );
   }
   if (type && !type.startsWith("references") && type !== "enum" && type !== "unique") {

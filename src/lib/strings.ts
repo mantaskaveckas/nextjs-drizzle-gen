@@ -22,6 +22,10 @@ export function toKebabCase(str: string): string {
   return toSnakeCase(str).replace(/_/g, "-");
 }
 
+export function escapeString(str: string): string {
+  return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
+
 export function pluralize(str: string): string {
   if (str.endsWith("y") && !/[aeiou]y$/.test(str)) {
     return str.slice(0, -1) + "ies";

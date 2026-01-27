@@ -183,6 +183,15 @@ describe("generateModel", () => {
 
       expect(content).toContain('status: text("status", { enum: ["draft", "published", "archived"] })');
     });
+
+    it("escapes quotes in enum values", () => {
+      generateModel("post", ['status:enum:draft,say "hi",published']);
+
+      const writeCall = vi.mocked(fs.writeFileSync).mock.calls[0];
+      const content = writeCall[1] as string;
+
+      expect(content).toContain('say \\"hi\\"');
+    });
   });
 
   describe("reference fields", () => {

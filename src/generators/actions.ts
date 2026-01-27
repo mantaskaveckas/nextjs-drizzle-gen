@@ -51,12 +51,15 @@ export async function get${pascalName}(id: ${idType}) {
     .from(${camelPlural})
     .where(eq(${camelPlural}.id, id))
     .limit(1);
+
   return result[0] ?? null;
 }
 
 export async function create${pascalName}(data: Omit<New${pascalName}, "id" | "createdAt" | "updatedAt">) {
   const result = await db.insert(${camelPlural}).values(data).returning();
+
   revalidatePath("/${kebabPlural}");
+
   return result[0];
 }
 
@@ -69,12 +72,15 @@ export async function update${pascalName}(
     .set({ ...data, updatedAt: new Date() })
     .where(eq(${camelPlural}.id, id))
     .returning();
+
   revalidatePath("/${kebabPlural}");
+
   return result[0];
 }
 
 export async function delete${pascalName}(id: ${idType}) {
   await db.delete(${camelPlural}).where(eq(${camelPlural}.id, id));
+
   revalidatePath("/${kebabPlural}");
 }
 `;

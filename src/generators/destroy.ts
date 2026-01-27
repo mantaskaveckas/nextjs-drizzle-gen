@@ -7,52 +7,40 @@ import {
   detectProjectConfig,
   log,
   GeneratorOptions,
+  ModelContext,
 } from "../lib";
 
-export function destroyScaffold(name: string, options: GeneratorOptions = {}): void {
+type PathBuilder = (ctx: ModelContext) => string;
+
+function destroy(
+  name: string,
+  type: string,
+  buildPath: PathBuilder,
+  options: GeneratorOptions = {}
+): void {
   validateModelName(name);
 
   const ctx = createModelContext(name);
   const config = detectProjectConfig();
   const prefix = options.dryRun ? "[dry-run] " : "";
 
-  log.info(`\n${prefix}Destroying scaffold ${ctx.pascalName}...\n`);
+  log.info(`\n${prefix}Destroying ${type} ${ctx.pascalName}...\n`);
 
-  const basePath = path.join(getAppPath(), ctx.kebabPlural);
+  const basePath = buildPath(ctx);
   deleteDirectory(basePath, options);
 
   log.info(`\nNote: Schema in ${config.dbPath}/schema.ts was not modified.`);
   log.info(`      Remove the table definition manually if needed.`);
+}
+
+export function destroyScaffold(name: string, options: GeneratorOptions = {}): void {
+  destroy(name, "scaffold", (ctx) => path.join(getAppPath(), ctx.kebabPlural), options);
 }
 
 export function destroyResource(name: string, options: GeneratorOptions = {}): void {
-  validateModelName(name);
-
-  const ctx = createModelContext(name);
-  const config = detectProjectConfig();
-  const prefix = options.dryRun ? "[dry-run] " : "";
-
-  log.info(`\n${prefix}Destroying resource ${ctx.pascalName}...\n`);
-
-  const basePath = path.join(getAppPath(), ctx.kebabPlural);
-  deleteDirectory(basePath, options);
-
-  log.info(`\nNote: Schema in ${config.dbPath}/schema.ts was not modified.`);
-  log.info(`      Remove the table definition manually if needed.`);
+  destroy(name, "resource", (ctx) => path.join(getAppPath(), ctx.kebabPlural), options);
 }
 
 export function destroyApi(name: string, options: GeneratorOptions = {}): void {
-  validateModelName(name);
-
-  const ctx = createModelContext(name);
-  const config = detectProjectConfig();
-  const prefix = options.dryRun ? "[dry-run] " : "";
-
-  log.info(`\n${prefix}Destroying API ${ctx.pascalName}...\n`);
-
-  const basePath = path.join(getAppPath(), "api", ctx.kebabPlural);
-  deleteDirectory(basePath, options);
-
-  log.info(`\nNote: Schema in ${config.dbPath}/schema.ts was not modified.`);
-  log.info(`      Remove the table definition manually if needed.`);
+  destroy(name, "API", (ctx) => path.join(getAppPath(), "api", ctx.kebabPlural), options);
 }

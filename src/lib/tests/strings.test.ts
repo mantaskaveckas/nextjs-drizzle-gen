@@ -6,6 +6,7 @@ import {
   toKebabCase,
   pluralize,
   singularize,
+  escapeString,
   createModelContext,
 } from "..";
 
@@ -83,6 +84,25 @@ describe("toKebabCase", () => {
   it("converts PascalCase", () => {
     expect(toKebabCase("UserName")).toBe("user-name");
     expect(toKebabCase("BlogPost")).toBe("blog-post");
+  });
+});
+
+describe("escapeString", () => {
+  it("returns simple strings unchanged", () => {
+    expect(escapeString("draft")).toBe("draft");
+    expect(escapeString("published")).toBe("published");
+  });
+
+  it("escapes double quotes", () => {
+    expect(escapeString('say "hello"')).toBe('say \\"hello\\"');
+  });
+
+  it("escapes backslashes", () => {
+    expect(escapeString("path\\to\\file")).toBe("path\\\\to\\\\file");
+  });
+
+  it("escapes both quotes and backslashes", () => {
+    expect(escapeString('say \\"hi\\"')).toBe('say \\\\\\"hi\\\\\\"');
   });
 });
 

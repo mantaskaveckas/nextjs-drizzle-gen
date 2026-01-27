@@ -24,6 +24,7 @@ export {
   toKebabCase,
   pluralize,
   singularize,
+  escapeString,
   createModelContext,
 } from "./strings";
 

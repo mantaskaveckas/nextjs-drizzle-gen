@@ -4,6 +4,7 @@ import { generateActions } from "./actions";
 import {
   parseFields,
   toPascalCase,
+  escapeString,
   writeFile,
   validateModelName,
   createModelContext,
@@ -146,9 +147,11 @@ import { create${pascalName} } from "../actions";
 export default function New${pascalName}Page() {
   async function handleCreate(formData: FormData) {
     "use server";
+
     await create${pascalName}({
 ${fields.map((f) => `      ${f.name}: ${formDataValue(f)},`).join("\n")}
     });
+
     redirect("/${kebabPlural}");
   }
 
@@ -191,9 +194,11 @@ function generateShowPage(
   const idHandling = options.uuid
     ? `const ${camelName} = await get${pascalName}(id);`
     : `const numericId = Number(id);
+
   if (isNaN(numericId)) {
     notFound();
   }
+
   const ${camelName} = await get${pascalName}(numericId);`;
 
   return `import { notFound } from "next/navigation";
@@ -234,13 +239,13 @@ export default async function ${pascalName}Page({
 
       <dl className="divide-y divide-gray-100">
 ${fields
-  .map(
-    (f) => `        <div className="py-3">
+      .map(
+        (f) => `        <div className="py-3">
           <dt className="text-sm text-gray-500">${toPascalCase(f.name)}</dt>
           <dd className="mt-1 text-gray-900">{${camelName}.${f.name}}</dd>
         </div>`
-  )
-  .join("\n")}
+      )
+      .join("\n")}
         <div className="py-3">
           <dt className="text-sm text-gray-500">Created At</dt>
           <dd className="mt-1 text-gray-900">{${camelName}.createdAt.toLocaleString()}</dd>
@@ -262,9 +267,11 @@ function generateEditPage(
   const idHandling = options.uuid
     ? `const ${camelName} = await get${pascalName}(id);`
     : `const numericId = Number(id);
+
   if (isNaN(numericId)) {
     notFound();
   }
+
   const ${camelName} = await get${pascalName}(numericId);`;
 
   const updateId = options.uuid ? "id" : "numericId";
@@ -287,9 +294,11 @@ export default async function Edit${pascalName}Page({
 
   async function handleUpdate(formData: FormData) {
     "use server";
+
     await update${pascalName}(${updateId}, {
 ${fields.map((f) => `      ${f.name}: ${formDataValue(f)},`).join("\n")}
     });
+
     redirect("/${kebabPlural}");
   }
 
@@ -321,19 +330,30 @@ ${fields.map((f) => generateFormField(f, camelName, true)).join("\n\n")}
 `;
 }
 
-function generateFormField(field: Field, camelName: string, withDefault = false): string {
-  const label = toPascalCase(field.name);
-  const defaultValue = withDefault ? ` defaultValue={${camelName}.${field.name}}` : "";
-  const inputClasses = "mt-1.5 block w-full rounded-lg border border-gray-200 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0";
-  const selectClasses = "mt-1.5 block w-full rounded-lg border border-gray-200 px-3 py-2 text-gray-900 focus:border-gray-400 focus:outline-none focus:ring-0";
-  const optionalLabel = field.nullable ? ` <span className="text-gray-400">(optional)</span>` : "";
-  const required = field.nullable ? "" : " required";
+// Form field context passed to generators
+interface FieldContext {
+  field: Field;
+  label: string;
+  optionalLabel: string;
+  required: string;
+  defaultValue: string;
+}
 
-  // Text/Long text - textarea
-  if (field.type === "text" || field.type === "json") {
-    const rows = field.type === "json" ? 6 : 4;
-    const placeholder = field.type === "json" ? ` placeholder="{}"` : "";
-    return `        <div>
+function createFieldContext(field: Field, camelName: string, withDefault: boolean): FieldContext {
+  return {
+    field,
+    label: toPascalCase(field.name),
+    optionalLabel: field.nullable ? ` <span className="text-gray-400">(optional)</span>` : "",
+    required: field.nullable ? "" : " required",
+    defaultValue: withDefault ? ` defaultValue={${camelName}.${field.name}}` : "",
+  };
+}
+
+function generateTextareaField(ctx: FieldContext): string {
+  const { field, label, optionalLabel, required, defaultValue } = ctx;
+  const rows = field.type === "json" ? 6 : 4;
+  const placeholder = field.type === "json" ? ` placeholder="{}"` : "";
+  return `        <div>
           <label htmlFor="${field.name}" className="block text-sm font-medium text-gray-700">
             ${label}${optionalLabel}
           </label>
@@ -341,15 +361,15 @@ function generateFormField(field: Field, camelName: string, withDefault = false)
             id="${field.name}"
             name="${field.name}"
             rows={${rows}}
-            className="${inputClasses} resize-none"${defaultValue}${placeholder}${required}
+            className="mt-1.5 block w-full rounded-lg border border-gray-200 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0 resize-none"${defaultValue}${placeholder}${required}
           />
         </div>`;
-  }
+}
 
-  // Boolean - checkbox
-  if (field.type === "boolean" || field.type === "bool") {
-    const defaultChecked = withDefault ? ` defaultChecked={${camelName}.${field.name}}` : "";
-    return `        <div className="flex items-center gap-2">
+function generateCheckboxField(ctx: FieldContext, camelName: string, withDefault: boolean): string {
+  const { field, label } = ctx;
+  const defaultChecked = withDefault ? ` defaultChecked={${camelName}.${field.name}}` : "";
+  return `        <div className="flex items-center gap-2">
           <input
             type="checkbox"
             id="${field.name}"
@@ -360,44 +380,30 @@ function generateFormField(field: Field, camelName: string, withDefault = false)
             ${label}
           </label>
         </div>`;
-  }
+}
 
-  // Integer/BigInt - number input
-  if (field.type === "integer" || field.type === "int" || field.type === "bigint") {
-    return `        <div>
+function generateNumberField(ctx: FieldContext, step?: string): string {
+  const { field, label, optionalLabel, required, defaultValue } = ctx;
+  const stepAttr = step ? `\n            step="${step}"` : "";
+  return `        <div>
           <label htmlFor="${field.name}" className="block text-sm font-medium text-gray-700">
             ${label}${optionalLabel}
           </label>
           <input
-            type="number"
+            type="number"${stepAttr}
             id="${field.name}"
             name="${field.name}"
-            className="${inputClasses}"${defaultValue}${required}
+            className="mt-1.5 block w-full rounded-lg border border-gray-200 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0"${defaultValue}${required}
           />
         </div>`;
-  }
+}
 
-  // Float/Decimal - number input with step
-  if (field.type === "float" || field.type === "decimal") {
-    const step = field.type === "decimal" ? "0.01" : "any";
-    return `        <div>
-          <label htmlFor="${field.name}" className="block text-sm font-medium text-gray-700">
-            ${label}${optionalLabel}
-          </label>
-          <input
-            type="number"
-            step="${step}"
-            id="${field.name}"
-            name="${field.name}"
-            className="${inputClasses}"${defaultValue}${required}
-          />
-        </div>`;
-  }
-
-  // Date/Datetime - date input
-  if (field.type === "date") {
-    const dateDefault = withDefault ? ` defaultValue={${camelName}.${field.name}?.toISOString().split("T")[0]}` : "";
-    return `        <div>
+function generateDateField(ctx: FieldContext, camelName: string, withDefault: boolean): string {
+  const { field, label, optionalLabel, required } = ctx;
+  const dateDefault = withDefault
+    ? ` defaultValue={${camelName}.${field.name}?.toISOString().split("T")[0]}`
+    : "";
+  return `        <div>
           <label htmlFor="${field.name}" className="block text-sm font-medium text-gray-700">
             ${label}${optionalLabel}
           </label>
@@ -405,14 +411,17 @@ function generateFormField(field: Field, camelName: string, withDefault = false)
             type="date"
             id="${field.name}"
             name="${field.name}"
-            className="${inputClasses}"${dateDefault}${required}
+            className="mt-1.5 block w-full rounded-lg border border-gray-200 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0"${dateDefault}${required}
           />
         </div>`;
-  }
+}
 
-  if (field.type === "datetime" || field.type === "timestamp") {
-    const dateDefault = withDefault ? ` defaultValue={${camelName}.${field.name}?.toISOString().slice(0, 16)}` : "";
-    return `        <div>
+function generateDatetimeField(ctx: FieldContext, camelName: string, withDefault: boolean): string {
+  const { field, label, optionalLabel, required } = ctx;
+  const dateDefault = withDefault
+    ? ` defaultValue={${camelName}.${field.name}?.toISOString().slice(0, 16)}`
+    : "";
+  return `        <div>
           <label htmlFor="${field.name}" className="block text-sm font-medium text-gray-700">
             ${label}${optionalLabel}
           </label>
@@ -420,31 +429,32 @@ function generateFormField(field: Field, camelName: string, withDefault = false)
             type="datetime-local"
             id="${field.name}"
             name="${field.name}"
-            className="${inputClasses}"${dateDefault}${required}
+            className="mt-1.5 block w-full rounded-lg border border-gray-200 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0"${dateDefault}${required}
           />
         </div>`;
-  }
+}
 
-  // Enum - select dropdown
-  if (field.isEnum && field.enumValues) {
-    const options = field.enumValues
-      .map((v) => `            <option value="${v}">${toPascalCase(v)}</option>`)
-      .join("\n");
-    return `        <div>
+function generateSelectField(ctx: FieldContext): string {
+  const { field, label, optionalLabel, required, defaultValue } = ctx;
+  const options = field.enumValues!
+    .map((v) => `            <option value="${escapeString(v)}">${toPascalCase(v)}</option>`)
+    .join("\n");
+  return `        <div>
           <label htmlFor="${field.name}" className="block text-sm font-medium text-gray-700">
             ${label}${optionalLabel}
           </label>
           <select
             id="${field.name}"
             name="${field.name}"
-            className="${selectClasses}"${defaultValue}${required}
+            className="mt-1.5 block w-full rounded-lg border border-gray-200 px-3 py-2 text-gray-900 focus:border-gray-400 focus:outline-none focus:ring-0"${defaultValue}${required}
           >
 ${options}
           </select>
         </div>`;
-  }
+}
 
-  // Default - text input (string, uuid, etc.)
+function generateTextField(ctx: FieldContext): string {
+  const { field, label, optionalLabel, required, defaultValue } = ctx;
   return `        <div>
           <label htmlFor="${field.name}" className="block text-sm font-medium text-gray-700">
             ${label}${optionalLabel}
@@ -453,9 +463,47 @@ ${options}
             type="text"
             id="${field.name}"
             name="${field.name}"
-            className="${inputClasses}"${defaultValue}${required}
+            className="mt-1.5 block w-full rounded-lg border border-gray-200 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0"${defaultValue}${required}
           />
         </div>`;
+}
+
+function generateFormField(field: Field, camelName: string, withDefault = false): string {
+  const ctx = createFieldContext(field, camelName, withDefault);
+
+  switch (field.type) {
+    case "text":
+    case "json":
+      return generateTextareaField(ctx);
+
+    case "boolean":
+    case "bool":
+      return generateCheckboxField(ctx, camelName, withDefault);
+
+    case "integer":
+    case "int":
+    case "bigint":
+      return generateNumberField(ctx);
+
+    case "float":
+      return generateNumberField(ctx, "any");
+
+    case "decimal":
+      return generateNumberField(ctx, "0.01");
+
+    case "date":
+      return generateDateField(ctx, camelName, withDefault);
+
+    case "datetime":
+    case "timestamp":
+      return generateDatetimeField(ctx, camelName, withDefault);
+
+    default:
+      if (field.isEnum && field.enumValues) {
+        return generateSelectField(ctx);
+      }
+      return generateTextField(ctx);
+  }
 }
 
 function formDataValue(field: Field): string {
@@ -464,6 +512,9 @@ function formDataValue(field: Field): string {
 
   // Handle nullable fields
   if (field.nullable) {
+    if (field.type === "boolean" || field.type === "bool") {
+      return `${getValue} === "on" ? true : null`;
+    }
     if (field.type === "integer" || field.type === "int" || field.type === "bigint") {
       return `${getValue} ? parseInt(${asString}) : null`;
     }
@@ -471,6 +522,7 @@ function formDataValue(field: Field): string {
       return `${getValue} ? parseFloat(${asString}) : null`;
     }
     if (field.type === "decimal") {
+      // Keep as string to preserve precision
       return `${getValue} ? ${asString} : null`;
     }
     if (field.type === "datetime" || field.type === "timestamp" || field.type === "date") {
@@ -491,6 +543,10 @@ function formDataValue(field: Field): string {
   }
   if (field.type === "float") {
     return `parseFloat(${asString})`;
+  }
+  if (field.type === "decimal") {
+    // Keep as string to preserve precision
+    return asString;
   }
   if (field.type === "datetime" || field.type === "timestamp" || field.type === "date") {
     return `new Date(${asString})`;

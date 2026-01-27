@@ -4,6 +4,7 @@ import {
   toCamelCase,
   toSnakeCase,
   pluralize,
+  escapeString,
   drizzleType,
   writeFile,
   fileExists,
@@ -83,7 +84,7 @@ function generateEnumDefinitions(fields: Field[], dialect: Dialect): string {
   return enumFields
     .map((field) => {
       const enumName = `${field.name}Enum`;
-      const values = field.enumValues!.map((v) => `"${v}"`).join(", ");
+      const values = field.enumValues!.map((v) => `"${escapeString(v)}"`).join(", ");
       return `\nexport const ${enumName} = pgEnum("${toSnakeCase(field.name)}", [${values}]);`;
     })
     .join("\n");
@@ -176,12 +177,12 @@ function generateEnumField(field: Field, columnName: string, dialect: Dialect): 
 
     case "mysql":
       // MySQL uses inline mysqlEnum
-      const mysqlValues = values.map((v) => `"${v}"`).join(", ");
+      const mysqlValues = values.map((v) => `"${escapeString(v)}"`).join(", ");
       return `  ${field.name}: mysqlEnum("${columnName}", [${mysqlValues}])${modifiers},`;
 
     default:
       // SQLite uses text with enum option
-      const sqliteValues = values.map((v) => `"${v}"`).join(", ");
+      const sqliteValues = values.map((v) => `"${escapeString(v)}"`).join(", ");
       return `  ${field.name}: text("${columnName}", { enum: [${sqliteValues}] })${modifiers},`;
   }
 }

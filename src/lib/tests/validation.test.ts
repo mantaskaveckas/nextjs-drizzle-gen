@@ -71,4 +71,16 @@ describe("validateFieldDefinition", () => {
   it("rejects enum without values", () => {
     expect(() => validateFieldDefinition("status:enum")).toThrow("requires values");
   });
+
+  it("rejects SQL reserved words as field names", () => {
+    expect(() => validateFieldDefinition("select:string")).toThrow("SQL reserved word");
+    expect(() => validateFieldDefinition("from:string")).toThrow("SQL reserved word");
+    expect(() => validateFieldDefinition("where:string")).toThrow("SQL reserved word");
+    expect(() => validateFieldDefinition("order:string")).toThrow("SQL reserved word");
+    expect(() => validateFieldDefinition("group:string")).toThrow("SQL reserved word");
+  });
+
+  it("suggests alternative names for reserved words", () => {
+    expect(() => validateFieldDefinition("order:integer")).toThrow('Consider renaming to "orderValue" or "orderField"');
+  });
 });

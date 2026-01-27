@@ -350,6 +350,31 @@ describe("generateScaffold", () => {
       expect(newPage).toContain('formData.get("discount") ? parseInt(');
       expect(newPage).toContain(": null");
     });
+
+    it("handles nullable boolean fields", () => {
+      generateScaffold("post", ["featured:boolean?"]);
+
+      const newPage = getWrittenFile("posts/new/page.tsx");
+
+      expect(newPage).toContain('featured: formData.get("featured") === "on" ? true : null');
+    });
+
+    it("keeps decimal fields as strings to preserve precision", () => {
+      generateScaffold("product", ["price:decimal"]);
+
+      const newPage = getWrittenFile("products/new/page.tsx");
+
+      expect(newPage).toContain('price: formData.get("price") as string');
+      expect(newPage).not.toContain("parseFloat");
+    });
+
+    it("handles nullable decimal fields as strings", () => {
+      generateScaffold("product", ["discount:decimal?"]);
+
+      const newPage = getWrittenFile("products/new/page.tsx");
+
+      expect(newPage).toContain('discount: formData.get("discount") ? formData.get("discount") as string : null');
+    });
   });
 
   // Helper function to get written file content
