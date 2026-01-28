@@ -19,6 +19,7 @@ import {
   getIdColumn,
   getTimestampColumns,
   getRequiredImports,
+  updateSchemaImports,
   getDbPath,
   Field,
   GeneratorOptions,
@@ -215,9 +216,11 @@ function appendToSchema(
   options: GeneratorOptions
 ): void {
   const existingContent = readFile(schemaPath);
+  const newImports = getRequiredImports(fields, dialect, options);
+  const updatedContent = updateSchemaImports(existingContent, newImports, dialect);
   const enumDefinitions = generateEnumDefinitions(fields, dialect);
   const tableDefinition = generateTableDefinition(modelName, tableName, fields, dialect, options);
-  const newContent = existingContent + enumDefinitions + "\n" + tableDefinition + "\n";
+  const newContent = updatedContent + enumDefinitions + "\n" + tableDefinition + "\n";
 
   writeFile(schemaPath, newContent, { force: true, dryRun: options.dryRun });
 }
@@ -232,9 +235,11 @@ function replaceInSchema(
 ): void {
   const existingContent = readFile(schemaPath);
   const cleanedContent = removeModelFromSchemaContent(existingContent, tableName);
+  const newImports = getRequiredImports(fields, dialect, options);
+  const updatedContent = updateSchemaImports(cleanedContent, newImports, dialect);
   const enumDefinitions = generateEnumDefinitions(fields, dialect);
   const tableDefinition = generateTableDefinition(modelName, tableName, fields, dialect, options);
-  const newContent = cleanedContent.trimEnd() + "\n" + enumDefinitions + "\n" + tableDefinition + "\n";
+  const newContent = updatedContent.trimEnd() + "\n" + enumDefinitions + "\n" + tableDefinition + "\n";
 
   writeFile(schemaPath, newContent, { force: true, dryRun: options.dryRun });
 }

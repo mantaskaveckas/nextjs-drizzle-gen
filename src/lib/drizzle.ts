@@ -135,6 +135,33 @@ export function getTimestampColumns(dialect: Dialect, noTimestamps = false): str
   }
 }
 
+export function extractImportsFromSchema(content: string): string[] {
+  const importMatch = content.match(/import\s*\{([^}]+)\}\s*from\s*["']drizzle-orm\/[^"']+["']/);
+  if (!importMatch) {
+    return [];
+  }
+  return importMatch[1]
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+}
+
+export function updateSchemaImports(content: string, newImports: string[], dialect: Dialect): string {
+  const existingImports = extractImportsFromSchema(content);
+  const mergedImports = Array.from(new Set([...existingImports, ...newImports]));
+  const drizzleImport = getDrizzleImport(dialect);
+  const newImportLine = `import { ${mergedImports.join(", ")} } from "${drizzleImport}";`;
+
+  // Replace the existing import line
+  const importRegex = /import\s*\{[^}]+\}\s*from\s*["']drizzle-orm\/[^"']+["'];?/;
+  if (importRegex.test(content)) {
+    return content.replace(importRegex, newImportLine);
+  }
+
+  // No existing import, prepend it
+  return newImportLine + "\n" + content;
+}
+
 export function getRequiredImports(fields: Field[], dialect: Dialect, options: GeneratorOptions = {}): string[] {
   const types = new Set<string>();
 

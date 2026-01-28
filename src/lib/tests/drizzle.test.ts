@@ -4,6 +4,8 @@ import {
   getTableFunction,
   getIdColumn,
   getDrizzleImport,
+  extractImportsFromSchema,
+  updateSchemaImports,
 } from "..";
 
 describe("getTableFunction", () => {
@@ -86,5 +88,55 @@ describe("drizzleType", () => {
       expect(drizzleType(jsonField, "mysql")).toBe("json");
       expect(drizzleType(uuidField, "mysql")).toBe("varchar");
     });
+  });
+});
+
+describe("extractImportsFromSchema", () => {
+  it("extracts imports from sqlite schema", () => {
+    const content = `import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
+
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey(),
+});`;
+    const imports = extractImportsFromSchema(content);
+    expect(imports).toEqual(["sqliteTable", "integer", "text"]);
+  });
+
+  it("extracts imports from postgresql schema", () => {
+    const content = `import { pgTable, serial, varchar } from "drizzle-orm/pg-core";`;
+    const imports = extractImportsFromSchema(content);
+    expect(imports).toEqual(["pgTable", "serial", "varchar"]);
+  });
+
+  it("returns empty array when no imports found", () => {
+    const content = `export const foo = 1;`;
+    const imports = extractImportsFromSchema(content);
+    expect(imports).toEqual([]);
+  });
+});
+
+describe("updateSchemaImports", () => {
+  it("merges new imports with existing ones", () => {
+    const content = `import { sqliteTable, integer } from "drizzle-orm/sqlite-core";
+
+export const users = sqliteTable("users", {});`;
+    const result = updateSchemaImports(content, ["text", "real"], "sqlite");
+    expect(result).toContain("sqliteTable");
+    expect(result).toContain("integer");
+    expect(result).toContain("text");
+    expect(result).toContain("real");
+  });
+
+  it("does not duplicate existing imports", () => {
+    const content = `import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";`;
+    const result = updateSchemaImports(content, ["integer", "text"], "sqlite");
+    const matches = result.match(/integer/g);
+    expect(matches?.length).toBe(1);
+  });
+
+  it("adds import line when none exists", () => {
+    const content = `export const foo = 1;`;
+    const result = updateSchemaImports(content, ["text"], "sqlite");
+    expect(result).toContain('import { text } from "drizzle-orm/sqlite-core";');
   });
 });

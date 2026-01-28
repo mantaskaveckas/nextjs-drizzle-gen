@@ -42,6 +42,8 @@ export {
   getIdColumn,
   getTimestampColumns,
   getRequiredImports,
+  extractImportsFromSchema,
+  updateSchemaImports,
 } from "./drizzle";
 
 // Files
